@@ -8,6 +8,7 @@ from scipy.io import wavfile
 
 from wkey.whisper import apply_whisper
 from wkey.utils import process_transcript, convert_chinese
+from wkey.llm_correction import llm_corrector
 
 load_dotenv()
 key_label = os.environ.get("WKEY", "alt_l")
@@ -60,6 +61,13 @@ def on_release(key):
             print(e)
         
         if transcript:
+            is_llm_correct_enabled = os.getenv("LLM_CORRECT", "false").lower() in ("true", "1", "yes")
+            if is_llm_correct_enabled:
+                original_transcript = transcript
+                transcript = llm_corrector(transcript)
+                if original_transcript != transcript:
+                    print(f"Before Corrected: {original_transcript}")
+
             if CHINESE_CONVERSION:
                 transcript = convert_chinese(transcript, CHINESE_CONVERSION)
             processed_transcript = process_transcript(transcript)
