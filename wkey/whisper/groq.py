@@ -6,6 +6,7 @@ from groq import Groq
 load_dotenv()
 client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
+    base_url=os.environ.get("GROQ_BASE_URL", "https://api.groq.com"),
 )
 WHISPER_MODEL = os.environ.get("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")
 WHISPER_LANGUAGE = os.environ.get("WHISPER_LANGUAGE")
