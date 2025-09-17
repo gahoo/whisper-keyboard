@@ -1,8 +1,6 @@
-numpy
 groq
 pynput
 python-dotenv==1.0.0
-scipy
 sounddevice==0.4.6
 requests
 opencc-python-reimplemented
