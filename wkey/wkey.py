@@ -12,7 +12,7 @@ from wkey.utils import process_transcript, convert_chinese
 load_dotenv()
 key_label = os.environ.get("WKEY", "alt_l")
 RECORD_KEY = Key[key_label]
-CHINESE_CONVERSION = os.environ.get("WHISPER_CHINESE_CONVERSION")
+CHINESE_CONVERSION = os.environ.get("CHINESE_CONVERSION")
 
 # This flag determines when to record
 recording = False

@@ -8,7 +8,7 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 WHISPER_MODEL = os.environ.get("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")
-WHISPER_LANGUAGE = os.environ.get("GROQ_WHISPER_LANGUAGE")
+WHISPER_LANGUAGE = os.environ.get("WHISPER_LANGUAGE")
 
 
 def apply_whisper(filepath: str, mode: str) -> str:
