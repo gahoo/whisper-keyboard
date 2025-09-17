@@ -1,11 +1,14 @@
 import os
 
 from dotenv import load_dotenv
-import openai
+from groq import Groq
 
 load_dotenv()
-WHISPER_MODEL = "whisper-1"
-openai.api_key = os.environ["OPENAI_API_KEY"]
+client = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
+)
+WHISPER_MODEL = os.environ.get("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")
+WHISPER_LANGUAGE = os.environ.get("GROQ_WHISPER_LANGUAGE")
 
 
 def apply_whisper(filepath: str, mode: str) -> str:
@@ -17,10 +20,20 @@ def apply_whisper(filepath: str, mode: str) -> str:
     
     with open(filepath, "rb") as audio_file:
         if mode == "translate":
-            response = openai.Audio.translate(WHISPER_MODEL, audio_file, prompt=prompt)
+            response = client.audio.translations.create(
+                file=audio_file,
+                model=WHISPER_MODEL,
+                prompt=prompt,
+            )
         elif mode == "transcribe":
-            response = openai.Audio.transcribe(WHISPER_MODEL, audio_file, prompt=prompt)
+            transcription_options = {
+                "file": audio_file,
+                "model": WHISPER_MODEL,
+                "prompt": prompt,
+            }
+            if WHISPER_LANGUAGE:
+                transcription_options["language"] = WHISPER_LANGUAGE
+            response = client.audio.transcriptions.create(**transcription_options)
 
-    transcript = response["text"]
-    return transcript
+    return response.text
 

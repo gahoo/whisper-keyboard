@@ -3,16 +3,16 @@ import os
 from dotenv import load_dotenv
 import sounddevice as sd
 import numpy as np
-import openai
 from pynput.keyboard import Controller as KeyboardController, Key, Listener
 from scipy.io import wavfile
 
 from wkey.whisper import apply_whisper
-from wkey.utils import process_transcript
+from wkey.utils import process_transcript, convert_chinese
 
 load_dotenv()
-key_label = os.environ.get("WKEY", "ctrl_r")
+key_label = os.environ.get("WKEY", "alt_l")
 RECORD_KEY = Key[key_label]
+CHINESE_CONVERSION = os.environ.get("WHISPER_CHINESE_CONVERSION")
 
 # This flag determines when to record
 recording = False
@@ -56,10 +56,12 @@ def on_release(key):
         transcript = None
         try:
             transcript = apply_whisper('recording.wav', 'transcribe')
-        except openai.error.InvalidRequestError as e:
+        except Exception as e:
             print(e)
         
         if transcript:
+            if CHINESE_CONVERSION:
+                transcript = convert_chinese(transcript, CHINESE_CONVERSION)
             processed_transcript = process_transcript(transcript)
             print(processed_transcript)
             keyboard_controller.type(processed_transcript)
